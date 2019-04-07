@@ -22,7 +22,6 @@ var setStateWithShallowCheck_1 = __importDefault(require("./setStateWithShallowC
 var SimpleStore = /** @class */ (function () {
     function SimpleStore(initialState) {
         var _this = this;
-        if (initialState === void 0) { initialState = {}; }
         this.getState = function () {
             return _this.state;
         };
@@ -45,7 +44,7 @@ var SimpleStore = /** @class */ (function () {
         if (!is_plain_object_1.default(initialState)) {
             throw new TypeError('initialState must be plain Object');
         }
-        this.state = __assign({}, initialState);
+        this.state = initialState ? __assign({}, initialState) : {};
         this.subscribers = [];
     }
     return SimpleStore;

@@ -13,7 +13,7 @@ var SimpleStore_1 = __importDefault(require("./SimpleStore"));
  * @retrun store ane useStore hook
  */
 var initStore = function (initialState, actions) {
-    var store = new SimpleStore_1.default(initialState || {});
+    var store = new SimpleStore_1.default(initialState);
     var memoActions = Object.entries(actions || {}).reduce(function (result, _a) {
         var key = _a[0], action = _a[1];
         if (typeof action === 'function') {
