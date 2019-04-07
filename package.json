@@ -1,0 +1,33 @@
+{
+  "name": "react-hooks-state-simple",
+  "version": "1.0.0",
+  "description": "One more implimitation of react hooks state manager",
+  "main": "dist/index.js",
+  "types": "./dist/index",
+  "private": false,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepublishOnly": "tsc"
+  },
+  "keywords": [
+    "react",
+    "hooks",
+    "state-manager"
+  ],
+  "files": [
+    "dist/*"
+  ],
+  "author": "dihar",
+  "license": "ISC",
+  "dependencies": {
+    "is-plain-object": "*"
+  },
+  "devDependencies": {
+    "@types/react": "^16.8.12",
+    "react": "^16.8.6",
+    "typescript": "^3.4.2"
+  },
+  "peerDependencies": {
+    "react": "^16.8.0"
+  }
+}
