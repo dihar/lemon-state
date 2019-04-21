@@ -89,9 +89,9 @@ Language.js
 ```js
 import React, { memo } from "react";
 import { useStore } from "./AppStore";
-console.log("Language render");
 const Loading = memo(() => {
   const { loading } = useStore(); // if you get 'loading' prop, only this prop will update component
+  console.log("Language render");
 
   return <div>{loading ? "loading" : "loaded"}</div>;
 });

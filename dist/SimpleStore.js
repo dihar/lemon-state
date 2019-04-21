@@ -22,6 +22,7 @@ var setStateWithShallowCheck_1 = __importDefault(require("./setStateWithShallowC
 var SimpleStore = /** @class */ (function () {
     function SimpleStore(initialState) {
         var _this = this;
+        if (initialState === void 0) { initialState = {}; }
         this.getState = function () {
             return _this.state;
         };

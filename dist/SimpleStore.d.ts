@@ -5,7 +5,7 @@ import { Subscriber, Unsubscribe } from './types';
 export default class SimpleStore<T> {
     private state;
     private subscribers;
-    constructor(initialState: T);
+    constructor(initialState?: T);
     getState: () => T;
     subscribe: (fn: Subscriber) => Unsubscribe;
     setState: (diff: Partial<T>) => void;

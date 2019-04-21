@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect } from 'react';
+import isPlainObject from 'is-plain-object';
 import SimpleStore from './SimpleStore';
-import { Actions, State } from './types';
+import { Actions, State, BoundActions } from './types';
 
 /**
  * Create new Store for using reack hook
@@ -11,15 +12,27 @@ import { Actions, State } from './types';
  */
 const initStore = <T extends State, G extends Actions<T>>(initialState?: T, actions?: G) => {
   const store = new SimpleStore<T>(initialState as T);
-  const memoActions = <Actions<T>>Object.entries(actions || {}).reduce((result: Actions<T>, [key, action]) => {
-    if (typeof action === 'function') {
-      result[key] = (payload: any) => {
-        return action(payload, { getState: store.getState, setState: store.setState })
-      };
-    }
 
-    return result;
-  }, {});
+  const memoActions = <Actions<T>>Object.entries(actions || {})
+    .reduce((result: BoundActions<T>, [key, action]) => {
+      if (typeof action === 'function') {
+        result[key] = (payload: any) => {
+          const actionResult = action({
+            state: store.getState(),
+            getState: store.getState,
+            setState: store.setState
+          }, payload);
+
+          if (isPlainObject(actionResult)) {
+            store.setState(actionResult);
+          }
+
+          return actionResult;
+        };
+      }
+
+      return result;
+    }, {});
 
   const useStore = (): T & G  => {
     const usingProps = <Set<string>>useMemo(() => new Set, []);

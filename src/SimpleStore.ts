@@ -9,7 +9,7 @@ export default class SimpleStore<T> {
   private state: State;
   private subscribers: Subscriber[];
 
-  constructor(initialState: T) {
+  constructor(initialState: T = {} as T) {
     if (!isPlainObject(initialState)) {
       throw new TypeError('initialState must be plain Object')
     }

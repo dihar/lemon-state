@@ -15,8 +15,22 @@ export interface Store<T> {
   setState: (newState: T) => void
 }
 
+export interface StoreChange<T> {
+  getState: () => State,
+  setState: (newState: T) => void,
+  state: T
+}
+
 export interface Action<T> {
-  (payload: string, storeChange: Store<T>): void | Promise<any>;
+  (storeChange: StoreChange<T>, payload: any): Partial<T>;
+}
+
+export interface BoundAction<T> {
+  (payload: any): void;
+}
+
+export interface BoundActions<T> {
+  [propName: string]: BoundAction<T>;
 }
 
 export interface Actions<T> {
