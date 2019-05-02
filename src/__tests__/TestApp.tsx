@@ -51,7 +51,7 @@ const actions:AppActions = {
   onReset: () => initState
 };
 
-const { useStore } = initStore(initState, actions, 'AppStore');
+const { useStore } = initStore(initState, actions);
 
 interface Props {
   onRender: (param: string) => void

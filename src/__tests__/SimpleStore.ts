@@ -61,6 +61,9 @@ test('Subscribe store', () => {
   store.setState(diffState2);
   expect(callback).toBeCalledTimes(2);
 
+  store.setState(diffState, true);
+  expect(callback).toBeCalledTimes(2);
+
   unsubscribe();
   store.setState(diffState);
   expect(callback).toBeCalledTimes(2);

@@ -1,17 +1,62 @@
 import { useState, useMemo, useEffect } from 'react';
 import isPlainObject from 'is-plain-object';
 import SimpleStore from './SimpleStore';
-import { Actions, State, BoundActions } from './types';
+import { Actions, Action, State, BoundActions, StoreConfig } from './types';
+
+const defaultStoreConfig = {
+  name: 'DefaultStore',
+  debug: false
+};
+
+const devToolsConect = (
+  window &&
+  // @ts-ignore
+  window.__REDUX_DEVTOOLS_EXTENSION__ &&
+  // @ts-ignore
+  window.__REDUX_DEVTOOLS_EXTENSION__.connect
+) || (() => {});
 
 /**
  * Create new Store for using reack hook
  * 
- * @param {Object} config
+ * @param {Object} initialState Start state
+ * @param {Object} actions Object with actions
+ * @param {Object} config Object with addidional configuration
  * 
- * @retrun store and useStore hook
+ * @retrun store, dispatch function and useStore hook
  */
-const initStore = <T extends State, G extends Actions<T>>(initialState?: T, actions?: G, name = 'DefaultStore') => {
+const initStore = <T extends State, G extends Actions<T>>(initialState?: T, actions?: G, config: StoreConfig = defaultStoreConfig) => {
   const store = new SimpleStore<T>(initialState as T);
+
+  let devTools: any = undefined;
+  if (config.debug) {
+    devTools = devToolsConect({
+      name: config.name
+    });
+    devTools.init(store.getState());
+    devTools.subscribe((message: any) => {
+      if (message.type === 'DISPATCH' && message.state) {
+        store.setState(message.state);
+      }
+    });
+  }
+
+  const dispatchAction = (actionFunction: Action<T>, payload: any) => {
+    const actionResult = actionFunction({
+      state: store.getState(),
+      getState: store.getState,
+      setState: store.setState,
+      dispatch: dispatchAction,
+    }, payload);
+
+    if (isPlainObject(actionResult)) {
+      store.setState(actionResult as Partial<T>);
+    }
+
+    if (devTools) {
+      devTools.send(actionFunction.name, store.getState())
+    }
+  };
 
   const memoActions = <BoundActions<T, G>>Object.entries(actions || {})
     .reduce((result: BoundActions<T, G>, [key, action]) => {
@@ -19,22 +64,12 @@ const initStore = <T extends State, G extends Actions<T>>(initialState?: T, acti
         result[key] = (payload: any) => {
           return new Promise<T>((resolve) => {
             requestAnimationFrame(() => {
-              const actionResult = action({
-                state: store.getState(),
-                getState: store.getState,
-                setState: store.setState
-              }, payload);
-
-              if (isPlainObject(actionResult)) {
-                store.setState(actionResult as Partial<T>);
-              }
-
+              dispatchAction(action, payload);
               resolve(store.getState());
             })
           });
         };
       }
-
       return result;
     }, {} as BoundActions<T, G>);
 

@@ -30,7 +30,7 @@ export default class SimpleStore<T> {
     };
   }
 
-  public setState = (diff: Partial<T>): void => {
+  public setState = (diff: Partial<T>, silent?: boolean): void => {
     if (!isPlainObject(diff)) {
       throw new TypeError('new state must be plain Object')
     }
@@ -38,7 +38,9 @@ export default class SimpleStore<T> {
     const newState = setStateWithShallowCheck(diff, this.state) as T;
     if (!Object.is(newState, this.state)) {
       this.state = newState;
-      this.subscribers.forEach(sub => sub(newState));
+      if (!silent) {
+        this.subscribers.forEach(sub => sub(newState));
+      }
     }
   }
 }

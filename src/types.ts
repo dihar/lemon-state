@@ -18,7 +18,8 @@ export interface Store<T> {
 export interface StoreChange<T>{
   getState: () => T,
   setState: (newState: Partial<T>) => void,
-  state: T
+  state: T,
+  dispatch: Dispatch<T>
 }
 
 export interface Action<T> {
@@ -35,4 +36,13 @@ export type BoundActions<T, G> = {
 
 export interface Actions<T> {
   [propName: string]: Action<T>;
+}
+
+export interface StoreConfig {
+  name?: string,
+  debug?: boolean
+}
+
+export interface Dispatch<T> {
+  (actionFunction: Action<T>, payload: any): void
 }
