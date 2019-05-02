@@ -182,3 +182,5 @@ export const { store, useStore } = initStore(initialState, actions);
 ```
 
 If you use IDE, autocompletion will help you ![autocompletion](images/autocompletion.png?raw=true "autocompletion")
+
+

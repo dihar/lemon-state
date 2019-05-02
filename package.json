@@ -3,7 +3,7 @@
   "version": "1.0.0-rc.3",
   "description": "One more implimitation of react hooks state manager",
   "main": "dist/index.js",
-  "types": "./dist/index",
+  "types": "./dist/types",
   "repository": {
     "type": "git",
     "url": "https://github.com/dihar/react-hooks-state-simple.git"
