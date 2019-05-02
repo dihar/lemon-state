@@ -1,13 +1,12 @@
-**Package moved to https://github.com/dihar/lemon-state**
-
-# react-hooks-state-simple
+![logo](images/lemon-logo.png?raw=true "logo")
+# lemon-state
 
 Very simple satet manager for react, based on hooks. No action constants, providers and HOCs, only one function in component. The component updates only when update used properties. Type-safe checked with state types.
 
 ## install
 
 ```bash
-npm i react-hooks-state-simple
+npm i lemon-state
 ```
 
 ## usage
@@ -17,7 +16,7 @@ Create file with initialing of store:
 AppStore.js
 
 ```js
-import initStore from "react-hooks-state-simple";
+import initStore from "lemon-state";
 
 const initialState = {
   loading: true,
@@ -60,10 +59,11 @@ export const { store, useStore } = initStore(initialState, actions, config);
 
 Action expect function with two arguments:
 
-1) `storeMethods` - object with three properties for working with store: `state`, `setState` and `getState`:
+1) `storeMethods` - object with four properties for working with store: `state`, `setState`, `getState` and `dispatch`:
   `setState` - update state and rerender all components which used updated (only!) variables
   `getState` - return actual state
-  `state` - state current at the time of the action's call 
+  `state` - state current at the time of the action's call
+  `dispatch` - for dispatching another actions
 2) `payload` - any data for working which you call action
 
 Action function can return plain object, it update state.
@@ -169,7 +169,7 @@ You can use several Stores, like this:
 
 SettingsStore.js
 ```js
-import initStore from "react-hooks-state-simple";
+import initStore from "lemon-state";
 import { store as appStore } from "./AppStore";
 
 const initialState = {
@@ -193,7 +193,7 @@ If you use IDE, autocompletion will help you ![autocompletion](images/autocomple
 
 ## Typescript
 
-You can use helper Types `import { Actions } from 'react-hooks-state-simple'`. See `src/__tests__/TestApp` example.
+You can use helper Types `import { Actions } from 'lemon-state'`. See `src/__tests__/TestApp` example.
 
 ## Debug
 

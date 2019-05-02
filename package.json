@@ -1,12 +1,12 @@
 {
-  "name": "react-hooks-state-simple",
+  "name": "lemon-state",
   "version": "1.0.0-rc.7",
   "description": "One more implimitation of react hooks state manager",
   "main": "dist/index.js",
   "types": "./dist/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/dihar/react-hooks-state-simple.git"
+    "url": "https://github.com/dihar/lemon-state.git"
   },
   "private": false,
   "scripts": {
