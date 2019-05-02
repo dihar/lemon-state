@@ -1,3 +1,5 @@
+**Package moved to https://github.com/dihar/lemon-state**
+
 # react-hooks-state-simple
 
 Very simple satet manager for react, based on hooks. No action constants, providers and HOCs, only one function in component. The component updates only when update used properties. Type-safe checked with state types.
