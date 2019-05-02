@@ -1,20 +1,20 @@
 import isPlainObject from 'is-plain-object';
 import setStateWithShallowCheck from './setStateWithShallowCheck';
-import { State, Subscriber, Unsubscribe } from './types';
+import { Subscriber, Unsubscribe } from './types';
 
 /**
  * Simple store class with minimum functions
  */
 export default class SimpleStore<T> {
-  private state: State;
-  private subscribers: Subscriber[];
+  private state: T;
+  private subscribers: Subscriber<T>[];
 
   constructor(initialState: T = {} as T) {
     if (!isPlainObject(initialState)) {
       throw new TypeError('initialState must be plain Object')
     }
 
-    this.state = initialState ? { ...initialState } : {};
+    this.state = initialState ? { ...initialState } : ({} as T);
     this.subscribers = [];
   }
 
@@ -22,7 +22,7 @@ export default class SimpleStore<T> {
     return this.state as T;
   }
 
-  public subscribe = (fn: Subscriber): Unsubscribe => {
+  public subscribe = (fn: Subscriber<T>): Unsubscribe => {
     this.subscribers.push(fn);
 
     return (): void => {
@@ -35,7 +35,7 @@ export default class SimpleStore<T> {
       throw new TypeError('new state must be plain Object')
     }
 
-    const newState = setStateWithShallowCheck(diff, this.state);
+    const newState = setStateWithShallowCheck(diff, this.state) as T;
     if (!Object.is(newState, this.state)) {
       this.state = newState;
       this.subscribers.forEach(sub => sub(newState));

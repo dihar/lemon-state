@@ -8,35 +8,39 @@ import { Actions, State, BoundActions } from './types';
  * 
  * @param {Object} config
  * 
- * @retrun store ane useStore hook
+ * @retrun store and useStore hook
  */
-const initStore = <T extends State, G extends Actions<T>>(initialState?: T, actions?: G) => {
+const initStore = <T extends State, G extends Actions<T>>(initialState?: T, actions?: G, name = 'DefaultStore') => {
   const store = new SimpleStore<T>(initialState as T);
 
-  const memoActions = <Actions<T>>Object.entries(actions || {})
-    .reduce((result: BoundActions<T>, [key, action]) => {
+  const memoActions = <BoundActions<T, G>>Object.entries(actions || {})
+    .reduce((result: BoundActions<T, G>, [key, action]) => {
       if (typeof action === 'function') {
         result[key] = (payload: any) => {
-          const actionResult = action({
-            state: store.getState(),
-            getState: store.getState,
-            setState: store.setState
-          }, payload);
+          return new Promise<T>((resolve) => {
+            requestAnimationFrame(() => {
+              const actionResult = action({
+                state: store.getState(),
+                getState: store.getState,
+                setState: store.setState
+              }, payload);
 
-          if (isPlainObject(actionResult)) {
-            store.setState(actionResult);
-          }
+              if (isPlainObject(actionResult)) {
+                store.setState(actionResult as Partial<T>);
+              }
 
-          return actionResult;
+              resolve(store.getState());
+            })
+          });
         };
       }
 
       return result;
-    }, {});
+    }, {} as BoundActions<T, G>);
 
-  const useStore = (): T & G  => {
+  const useStore = (): T & BoundActions<T, G>  => {
     const usingProps = <Set<string>>useMemo(() => new Set, []);
-    const [innerState, setInnerState] = <[State, (state: State) => void]>useState({});
+    const [innerState, setInnerState] = <[T, (state: T) => void]>useState({} as T);
     const proxyObject = <T & G>useMemo(() => new Proxy({}, {
       get: (_, prop: string) => {
         usingProps.add(prop);
@@ -60,7 +64,7 @@ const initStore = <T extends State, G extends Actions<T>>(initialState?: T, acti
     useEffect(() => {
       return store.subscribe((newState) => {
         let isPropsChanged = false;
-        const newInnerState: State = {};
+        const newInnerState: T = {} as T;
 
         usingProps.forEach(key => {
           if (key in memoActions) {

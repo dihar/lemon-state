@@ -6,9 +6,7 @@
     "lib": [
       "dom",
       "es5",
-      "es2015.core",
-      "es2015.collection",
-      "es2015.proxy",
+      "es2015",
       "es2017.object"
     ],                             /* Specify library files to be included in the compilation. */
     // "allowJs": true,                       /* Allow javascript files to be compiled. */
@@ -67,4 +65,5 @@
     // "emitDecoratorMetadata": true,         /* Enables experimental support for emitting type metadata for decorators. */
   },
   "include": ["./src/**/*"],
+  "exclude": ["**/__tests__/", "node_modules"]
 }

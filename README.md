@@ -19,20 +19,29 @@ import initStore from "react-hooks-state-simple";
 
 const initialState = {
   loading: true,
-  lang: "ru"
+  lang: "ru",
+  data: []
 };
 
 const actions = {
-  onSetLoad: (payload, { setState }) => {
+  onSetLoad: ({ state }, payload) => ({
+    loading: payload
+  }),
+  onSwitchLang: ({ state }, payload) => ({
+    lang: state.lang === "ru" ? "en" : "ru"
+  }),
+  onAsyncAction: async ({ getState, setState, state }, payload) => {
     setState({
-      loading: payload
+      loading: true
     });
-  },
-  onSwitchLang: (payload, { setState, getState }) => {
+
+    data = await loadData(payload);
+
     setState({
-      lang: getState().lang === "ru" ? "en" : "ru"
+      loading: false,
+      data
     });
-  }
+  })
 };
 
 export const { store, useStore } = initStore(initialState, actions);
@@ -43,11 +52,16 @@ export const { store, useStore } = initStore(initialState, actions);
 
 Action expect function with two arguments:
 
-1) `payload` - any data for working which you call action
-2) `storeMethods` - object with two methods for working with store: `setState` and `getState`. `setState` - update state and rerender all components which used updated (only!) variables. `getState` - return actual state.
+1) `storeMethods` - object with three properties for working with store: `state`, `setState` and `getState`:
+  `setState` - update state and rerender all components which used updated (only!) variables
+  `getState` - return actual state
+  `state` - state current at the time of the action's call 
+2) `payload` - any data for working which you call action
 
-Function `initStore` expect two arguments `initialState`, `actions`. Each of them not required, but must be object;
-`initStore` returns object with `store` and `useStore` keys. 
+Action function can return plain object, it update state.
+
+Function `initStore` expect two arguments `initialState`, `actions`. Each of them not required, but must be object:
+`initStore` returns object with `store` and `useStore` keys
 `store` - need for working with store outside of component, for side effects and logging, it have interface
 
 ```js
@@ -141,7 +155,7 @@ In console appended:
 Loading render 
 ```
 
-**You don't need use constant, HOCs and another verbose patterns. Only one function do all you need: data access and action dispatching**
+**You don't need use constants, HOCs and another verbose patterns. Only one function do all you need: data access and action dispatching**
 
 You can use several Stores, like this:
 
@@ -155,17 +169,16 @@ const initialState = {
 };
 
 const actions = {
-  onSetSettings: (payload, { setState }) => {
+  onSetSettings: ({ state }, payload) => {
     if (!appStore.getState().loading) {
-      setState({
+      return {
         userSettings: payload
-      });
+      };
     }
   }
 };
 
 export const { store, useStore } = initStore(initialState, actions);
 ```
-
 
 If you use IDE, autocompletion will help you ![autocompletion](images/autocompletion.png?raw=true "autocompletion")

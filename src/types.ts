@@ -2,8 +2,8 @@ export type State = {
   [propName: string]: any;
 };
 
-export interface Subscriber {
-  (newState: State): void;
+export interface Subscriber<T> {
+  (newState: T): void;
 }
 
 export interface Unsubscribe {
@@ -11,26 +11,26 @@ export interface Unsubscribe {
 }
 
 export interface Store<T> {
-  getState: () => State,
-  setState: (newState: T) => void
+  getState: () => T,
+  setState: (newState: Partial<T>) => Promise<T>,
 }
 
-export interface StoreChange<T> {
-  getState: () => State,
-  setState: (newState: T) => void,
+export interface StoreChange<T>{
+  getState: () => T,
+  setState: (newState: Partial<T>) => void,
   state: T
 }
 
 export interface Action<T> {
-  (storeChange: StoreChange<T>, payload: any): Partial<T>;
+  (storeChange: StoreChange<T>, payload: any): Partial<T> | void;
 }
 
 export interface BoundAction<T> {
-  (payload: any): void;
+  (payload?: any): Promise<T>;
 }
 
-export interface BoundActions<T> {
-  [propName: string]: BoundAction<T>;
+export type BoundActions<T, G> = {
+  [P in keyof G]: BoundAction<T>
 }
 
 export interface Actions<T> {

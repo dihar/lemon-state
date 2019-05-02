@@ -20,15 +20,19 @@ var initStore = function (initialState, actions) {
         var key = _a[0], action = _a[1];
         if (typeof action === 'function') {
             result[key] = function (payload) {
-                var actionResult = action({
-                    state: store.getState(),
-                    getState: store.getState,
-                    setState: store.setState
-                }, payload);
-                if (is_plain_object_1.default(actionResult)) {
-                    store.setState(actionResult);
-                }
-                return actionResult;
+                return new Promise(function (resolve) {
+                    requestAnimationFrame(function () {
+                        var actionResult = action({
+                            state: store.getState(),
+                            getState: store.getState,
+                            setState: store.setState
+                        }, payload);
+                        if (is_plain_object_1.default(actionResult)) {
+                            store.setState(actionResult);
+                        }
+                        resolve(store.getState());
+                    });
+                });
             };
         }
         return result;

@@ -1,4 +1,3 @@
-import isPlainObject from 'is-plain-object';
 import { State } from './types';
 
 const setStateWithShallowCheck = (newState: State, state: State = {}): State => {
