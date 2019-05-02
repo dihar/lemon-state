@@ -1,4 +1,4 @@
-![logo](images/lemon-logo.png?raw=true "logo")
+![logo](images/lemon-logo.jpg?raw=true "logo")
 # lemon-state
 
 Very simple satet manager for react, based on hooks. No action constants, providers and HOCs, only one function in component. The component updates only when update used properties. Type-safe checked with state types.
