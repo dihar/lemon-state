@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import isPlainObject from 'is-plain-object';
 import SimpleStore from './SimpleStore';
-import { Actions, Action, State, BoundActions, StoreConfig, InitialedStore } from './types';
+import { Actions, Action, State, BoundActions, StoreConfig, InitialedStore, InitStore } from './types';
 
 const defaultStoreConfig = {
   name: 'DefaultStore',
@@ -25,7 +25,7 @@ const devToolsConect = (
  * 
  * @retrun store, dispatch function and useStore hook
  */
-const initStore = <T extends State, G extends Actions<T>>(initialState?: T, actions?: G, config: StoreConfig = defaultStoreConfig): InitialedStore<T, G> => {
+const initStore: InitStore = <T extends State, G extends Actions<T>>(initialState?: T, actions?: G, config: StoreConfig = defaultStoreConfig): InitialedStore<T, G> => {
   const store = new SimpleStore<T>(initialState as T);
 
   let devTools: any = undefined;

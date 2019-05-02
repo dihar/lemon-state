@@ -54,3 +54,7 @@ export interface InitialedStore<T, G> {
   store: SimpleStore<T>,
   dispatch: Dispatch<T>
 }
+
+export interface InitStore {
+  <T extends State, G extends Actions<T>>(initialState?: T, actions?: G, config?: StoreConfig): InitialedStore<T, G>
+};
