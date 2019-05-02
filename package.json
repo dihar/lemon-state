@@ -1,6 +1,6 @@
 {
   "name": "react-hooks-state-simple",
-  "version": "1.0.0-rc.2",
+  "version": "1.0.0-rc.3",
   "description": "One more implimitation of react hooks state manager",
   "main": "dist/index.js",
   "types": "./dist/index",
@@ -11,7 +11,7 @@
   "private": false,
   "scripts": {
     "test": "jest",
-    "prepublishOnly": "tsc"
+    "prepublishOnly": "jest && tsc"
   },
   "keywords": [
     "react",
