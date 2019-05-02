@@ -44,11 +44,17 @@ const actions = {
   })
 };
 
-export const { store, useStore } = initStore(initialState, actions);
+const config = {
+  name: 'AppStore',
+  debug: process.env.NODE_ENV === 'development'
+};
+
+export const { store, useStore } = initStore(initialState, actions, config);
 ```
 
 `initialState` - your first state and this is scheme for autocompletion, write here all properties, object expected
 `actions` - object with actions, it is scheme for autocompletion too
+`config` - object with config for debugging
 
 Action expect function with two arguments:
 
@@ -182,5 +188,22 @@ export const { store, useStore } = initStore(initialState, actions);
 ```
 
 If you use IDE, autocompletion will help you ![autocompletion](images/autocompletion.png?raw=true "autocompletion")
+
+## Typescript
+
+You can use helper Types from `@react-hooks-state-simple/dist/types`. See `src/__tests__/TestApp` example.
+
+## Debug
+
+You can use redux-devtools-extension
+
+```js
+const config = {
+  name: 'AppStore',
+  debug: process.env.NODE_ENV === 'development'
+};
+
+export const { store, useStore } = initStore(initialState, actions, config);
+```
 
 
