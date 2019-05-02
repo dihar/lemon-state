@@ -9,7 +9,7 @@ const defaultStoreConfig = {
 };
 
 const devToolsConect = (
-  window &&
+  typeof window !== 'undefined' &&
   // @ts-ignore
   window.__REDUX_DEVTOOLS_EXTENSION__ &&
   // @ts-ignore
@@ -36,12 +36,15 @@ const initStore: InitStore = <T extends State, G extends Actions<T>>(initialStat
         jump: true
       }
     });
-    devTools.init(store.getState());
-    devTools.subscribe((message: any) => {
-      if (message.type === 'DISPATCH' && message.state) {
-        store.setState(JSON.parse(message.state));
-      }
-    });
+
+    if (devTools) {
+      devTools.init(store.getState());
+      devTools.subscribe((message: any) => {
+        if (message.type === 'DISPATCH' && message.state) {
+          store.setState(JSON.parse(message.state));
+        }
+      });
+    }
   }
 
   const dispatchAction = (actionFunction: Action<T>, payload: any) => {
