@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import isPlainObject from 'is-plain-object';
 import SimpleStore from './SimpleStore';
-import { Actions, Action, State, BoundActions, StoreConfig } from './types';
+import { Actions, Action, State, BoundActions, StoreConfig, InitialedStore } from './types';
 
 const defaultStoreConfig = {
   name: 'DefaultStore',
@@ -17,7 +17,7 @@ const devToolsConect = (
 ) || (() => {});
 
 /**
- * Create new Store for using reack hook
+ * Create new Store for using react hook
  * 
  * @param {Object} initialState Start state
  * @param {Object} actions Object with actions
@@ -25,18 +25,21 @@ const devToolsConect = (
  * 
  * @retrun store, dispatch function and useStore hook
  */
-const initStore = <T extends State, G extends Actions<T>>(initialState?: T, actions?: G, config: StoreConfig = defaultStoreConfig) => {
+const initStore = <T extends State, G extends Actions<T>>(initialState?: T, actions?: G, config: StoreConfig = defaultStoreConfig): InitialedStore<T, G> => {
   const store = new SimpleStore<T>(initialState as T);
 
   let devTools: any = undefined;
   if (config.debug) {
     devTools = devToolsConect({
-      name: config.name
+      name: config.name,
+      features: {
+        jump: true
+      }
     });
     devTools.init(store.getState());
     devTools.subscribe((message: any) => {
       if (message.type === 'DISPATCH' && message.state) {
-        store.setState(message.state);
+        store.setState(JSON.parse(message.state));
       }
     });
   }
@@ -122,6 +125,7 @@ const initStore = <T extends State, G extends Actions<T>>(initialState?: T, acti
   return {
     useStore,
     store,
+    dispatch: dispatchAction
   };
 }
 

@@ -191,7 +191,7 @@ If you use IDE, autocompletion will help you ![autocompletion](images/autocomple
 
 ## Typescript
 
-You can use helper Types from `@react-hooks-state-simple/dist/types`. See `src/__tests__/TestApp` example.
+You can use helper Types `import { Actions } from 'react-hooks-state-simple'`. See `src/__tests__/TestApp` example.
 
 ## Debug
 

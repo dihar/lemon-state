@@ -1,6 +1,6 @@
 {
   "name": "react-hooks-state-simple",
-  "version": "1.0.0-rc.4",
+  "version": "1.0.0-rc.5",
   "description": "One more implimitation of react hooks state manager",
   "main": "dist/index.js",
   "types": "./dist/types",

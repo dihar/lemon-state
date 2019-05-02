@@ -1,3 +1,5 @@
+import SimpleStore from "./SimpleStore";
+
 export type State = {
   [propName: string]: any;
 };
@@ -45,4 +47,10 @@ export interface StoreConfig {
 
 export interface Dispatch<T> {
   (actionFunction: Action<T>, payload: any): void
+}
+
+export interface InitialedStore<T, G> {
+  useStore: () => T & BoundActions<T, G>,
+  store: SimpleStore<T>,
+  dispatch: Dispatch<T>
 }
