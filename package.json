@@ -12,7 +12,7 @@
   "scripts": {
     "build": "tsc",
     "test": "jest",
-    "prepack": "jest && build"
+    "prepack": "jest && npm run build"
   },
   "keywords": [
     "react",
