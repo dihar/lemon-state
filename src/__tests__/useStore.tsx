@@ -1,21 +1,19 @@
 import React from 'react';
-import { render, fireEvent, getByTestId, act, cleanup } from "react-testing-library";
+import ReactDOM from 'react-dom';
+import { render, fireEvent, getByTestId, act, cleanup } from '@testing-library/react';
 import App from './TestApp';
-
-beforeEach(() => {
-  // @ts-ignore
-  jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb()); // mock async action calling
-});
-
-afterEach(() => {
-  cleanup();
-  // @ts-ignore
-  window.requestAnimationFrame.mockRestore();
-});
 
 jest.useFakeTimers();
 
-test('App loads with initial state', () => {
+afterEach(cleanup);
+
+test.skip('Test App renders without crashing', () => {
+  const div = document.createElement('div');
+  ReactDOM.render(<App />, div);
+  ReactDOM.unmountComponentAtNode(div);
+});
+
+test.skip('App loads with initial state', () => {
   const { container } = render(<App />);
 
   const loadingSpan = getByTestId(container, 'loading');
@@ -27,8 +25,8 @@ test('App loads with initial state', () => {
   expect(checkedDiv.textContent).toBe('Not checked');
 });
 
-test('Changing data in the store change view', () => {
-  const { container } = render(<App />);
+test('Changing data in the store change view', async () => {
+  const { container, debug } = render(<App />);
   const loadingSpan = getByTestId(container, 'loading');
   const errorSpan = getByTestId(container, 'error');
   const checkedDiv = getByTestId(container, 'checked');
@@ -48,8 +46,10 @@ test('Changing data in the store change view', () => {
     jest.runOnlyPendingTimers();
   });
 
-  expect(loadingSpan.textContent).toBe('');
+  debug();
+  console.log(loadingSpan.textContent)
   expect(listDiv.children.length).toBe(2);
+  expect(loadingSpan.textContent).toBe('');
   expect(errorSpan.textContent).toBe('');
   expect(checkedDiv.textContent).toBe('Not checked');
 
@@ -81,7 +81,7 @@ test('Changing data in the store change view', () => {
   expect(checkedDiv.textContent).toBe('Not checked');
 });
 
-test('Changing data render only dependent components', () => {
+test.skip('Changing data render only dependent components', () => {
   const renderCb = jest.fn();
   const { container } = render(<App onRender={renderCb} />);
 
