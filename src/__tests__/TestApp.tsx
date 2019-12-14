@@ -69,7 +69,7 @@ const FirstSection = memo(({ onRender }) => {
       withError: true
     });
   }, [state.onRequestData]);
-  console.log(state.loading, 'load')
+  console.log(state.computed, 'load')
   onRender('first');
   return (
     <div>

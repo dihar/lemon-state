@@ -1,6 +1,6 @@
 {
   "name": "lemon-state",
-  "version": "0.0.2",
+  "version": "1.0.0-rc.0",
   "description": "One more implimitation of react hooks state manager",
   "main": "dist/index.js",
   "types": "./dist/index.d.ts",
@@ -10,8 +10,9 @@
   },
   "private": false,
   "scripts": {
+    "build": "tsc",
     "test": "jest",
-    "prepublishOnly": "jest && tsc"
+    "prepack": "jest && build"
   },
   "keywords": [
     "react",

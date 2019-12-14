@@ -1,6 +1,5 @@
 import { LemonState } from '../Store/LemonState';
-import { LemonStore } from '../Store/LemonStore';
-import { Actions, State, StoreChange, Action } from '../types';
+import { Actions, State, Action } from '../types';
 
 describe('Lemon actions tests', () => {
 
@@ -28,7 +27,7 @@ describe('Lemon actions tests', () => {
     const actions: Actions<InitialState, Actions1> = {
       changeFoo: ({ getState }, payload: number) => {
         const { foo } = getState();
-  
+
         return {
           foo: foo * payload
         };
@@ -79,5 +78,21 @@ describe('Lemon actions tests', () => {
     expect(mockFn).toBeCalledTimes(3);
 
     store.remove();
+  });
+
+  test('Can\'t dispatch after remove', () => {
+    const store = new LemonState({}, {});
+    store.remove();
+    expect(() => {
+      store.dispatch(() => {});
+    }).toThrow();
+  });
+
+  test('Actions must be a function', () => {
+    expect(() => {
+      new LemonState({}, {
+        some: 'not function'
+      } as any, { debug: true });
+    }).toThrow();
   });
 });

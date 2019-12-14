@@ -29,7 +29,7 @@ export class LemonState<T, A> {
   private store: LemonStore<T>;
   private devTools: any = undefined;
 
-  constructor(initial: T, actions: Actions<T, A>, private config: StoreConfig = defaultStoreConfig) {
+  constructor(initial: T, actions: Actions<T, A> = {} as Actions<T, A>, private config: StoreConfig = defaultStoreConfig) {
     this.store = new LemonStore(initial, config.name);
     this.config = {
       ...defaultStoreConfig,

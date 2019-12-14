@@ -1,2 +1,2 @@
-export { LemonState } from './Store/LemonState';
-export { createHook } from './reactUtils/createHook';
+export { LemonState } from './LemonState';
+export { createHook } from './createHook';

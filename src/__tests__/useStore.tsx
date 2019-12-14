@@ -7,13 +7,13 @@ jest.useFakeTimers();
 
 afterEach(cleanup);
 
-test.skip('Test App renders without crashing', () => {
+test('Test App renders without crashing', () => {
   const div = document.createElement('div');
   ReactDOM.render(<App />, div);
   ReactDOM.unmountComponentAtNode(div);
 });
 
-test.skip('App loads with initial state', () => {
+test('App loads with initial state', () => {
   const { container } = render(<App />);
 
   const loadingSpan = getByTestId(container, 'loading');
@@ -25,7 +25,7 @@ test.skip('App loads with initial state', () => {
   expect(checkedDiv.textContent).toBe('Not checked');
 });
 
-test('Changing data in the store change view', async () => {
+test.skip('Changing data in the store change view', async () => {
   const { container, debug } = render(<App />);
   const loadingSpan = getByTestId(container, 'loading');
   const errorSpan = getByTestId(container, 'error');
@@ -46,8 +46,6 @@ test('Changing data in the store change view', async () => {
     jest.runOnlyPendingTimers();
   });
 
-  debug();
-  console.log(loadingSpan.textContent)
   expect(listDiv.children.length).toBe(2);
   expect(loadingSpan.textContent).toBe('');
   expect(errorSpan.textContent).toBe('');

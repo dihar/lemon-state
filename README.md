@@ -1,7 +1,7 @@
 ![logo](images/lemon-logo.jpg?raw=true "logo")
 # lemon-state
 
-Very simple state manager for react, based on hooks. No action constants, providers and HOCs, only one function in component. The component updates only when update used properties. Type-safe checked with state types.
+Very simple state manager. No action constants, providers and HOCs, only one function in component. The component updates only when update used properties. Type-safe checked with state types.
 
 ## install
 
@@ -16,41 +16,36 @@ Create file with initialing of store:
 AppStore.js
 
 ```js
-import initStore from "lemon-state";
+import { LemonState, createHook } from "lemon-state";
 
 const initialState = {
-  loading: true,
+  loading: true, // static data
   lang: "ru",
-  data: []
+  data: [],
+  computed: (state) => state.data.join(":") // computed data, just use here this state or anoter, all depends will be resolved
 };
 
 const actions = {
-  onSetLoad: ({ state }, payload) => ({
+  onSetLoad: (_, payload) => ({
     loading: payload
   }),
-  onSwitchLang: ({ state }, payload) => ({
-    lang: state.lang === "ru" ? "en" : "ru"
+  onSwitchLang: ({ getState }, payload) => ({
+    lang: getState().lang === "ru" ? "en" : "ru"
   }),
-  onAsyncAction: async ({ getState, setState, state }, payload) => {
-    setState({
-      loading: true
-    });
-
-    data = await loadData(payload);
-
-    setState({
-      loading: false,
-      data
-    });
+  onAsyncAction: async ({ getState, setState }, payload) => {
+    setState({ loading: true });
+    const data = await loadData(payload);
+    setState({ loading: false, data });
   })
 };
 
 const config = {
-  name: 'AppStore',
-  debug: process.env.NODE_ENV === 'development'
+  name: "AppStore",
+  debug: process.env.NODE_ENV === "development" // if we want using redux dev tools
 };
 
-export const { store, useStore } = initStore(initialState, actions, config);
+export const store = new LemonState(initialState, actions, config); // create store
+export const { useStore } = createHook(store); // create hook
 ```
 
 `initialState` - your first state and this is scheme for autocompletion, write here all properties, object expected
@@ -59,29 +54,41 @@ export const { store, useStore } = initStore(initialState, actions, config);
 
 Action expect function with two arguments:
 
-1) `storeMethods` - object with four properties for working with store: `state`, `setState`, `getState` and `dispatch`:
+1) `StoreChange` - object with four properties for working with store: `setState`, `getState` and `dispatch`:
   `setState` - update state and rerender all components which used updated (only!) variables
   `getState` - return actual state
-  `state` - state current at the time of the action's call
   `dispatch` - for dispatching another actions
 2) `payload` - any data for working which you call action
 
 Action function can return plain object, it update state.
 
-Function `initStore` expect two arguments `initialState`, `actions`. Each of them not required, but must be object:
-`initStore` returns object with `store` and `useStore` keys
-`store` - need for working with store outside of component, for side effects and logging, it have interface
+`LemonState` expect two arguments `initialState`, `actions`. `actions` is not required, but must be object:
 
 ```js
-class SimpleStore {
+class LemonState {
   // get actual state
   getState: () => State;
 
   // method expect function which be called when state will be updated, return unsubscribe callback
   subscribe: (fn) => Unsubscribe;
 
+  // after first call subscriber know what properties it using, other call will be only after depends changes
+  smartSubscribe: (fn) => Unsubscribe;
+
   // set new state, call subscribers only after check different by Object.is algorithm
   setState: (diff) => void;
+
+  // call action function with StoreChange object
+  dispatch: (action) => any;
+
+  // clear all memory of Store
+  remove: () => void;
+
+  // object with dispatched actions
+  actions: Actions;
+
+  // removed indicator
+  isRemoved: boolean;
 }
 ```
 
@@ -169,7 +176,7 @@ You can use several Stores, like this:
 
 SettingsStore.js
 ```js
-import initStore from "lemon-state";
+import { LemonState } from "lemon-state";
 import { store as appStore } from "./AppStore";
 
 const initialState = {
@@ -186,7 +193,7 @@ const actions = {
   }
 };
 
-export const { store, useStore } = initStore(initialState, actions);
+export const store = LemonState(initialState, actions);
 ```
 
 If you use IDE, autocompletion will help you ![autocompletion](images/autocompletion.png?raw=true "autocompletion")
@@ -205,7 +212,7 @@ const config = {
   debug: process.env.NODE_ENV === 'development'
 };
 
-export const { store, useStore } = initStore(initialState, actions, config);
+export const store = store(initialState, actions, config);
 ```
 
 
