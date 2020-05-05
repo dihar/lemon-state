@@ -17,38 +17,21 @@ const hasIntersection = <A, B>(set1: Set<keyof A>, set2: Set<keyof B>): boolean 
   return result;
 };
 
-let activePropertyListener: (() => void) | undefined;
-
 export const createHook = <T, A>(store: LemonState<T, A>) => {
   const useStore = (): State<T> & BoundActions<A> => {
-    const [listenObject] = useState(propertyListener(store.getState()));
+    const listenObject = propertyListener(store.getState());
     const [state, setState] = useState(listenObject.getProxy());
 
-    const stopListenProperty = () => {
-      listenObject.stop();
-    };
-
-    if (activePropertyListener) {
-      activePropertyListener();
-      activePropertyListener = stopListenProperty;
-    }
-
     useEffect(() => {
+      listenObject.stop();
       return store.subscribe((newState, changedProps) => {
         if (hasIntersection(changedProps, listenObject.getUsedkeys())) {
-          if (activePropertyListener === stopListenProperty) {
-            activePropertyListener();
-            activePropertyListener = undefined;
-          }
           setState(newState);
         }
       });
     }, []);
 
-    return {
-      ...state,
-      ...store.actions
-    };
+    return Object.assign(state, store.actions);
   };
 
   return { useStore };

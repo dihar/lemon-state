@@ -1,5 +1,4 @@
 import isPlainObject from 'is-plain-object';
-import { State } from './types';
 
 export const propertyListener = <T>(data: T) => {
   if (!isPlainObject(data)) {
