@@ -12,7 +12,7 @@ export class SmartSubscriber<T> {
   private smartSubscribers = new Map<Subscriber<T>, (keyof T)[]>();
   private noIndexedSubscribers = new Set<Subscriber<T>>();
 
-  constructor(private state: LemonStore<T>) {
+  constructor(state: LemonStore<T>) {
     state.subscribe(this.mainSubscriber.bind(this));
   }
 
@@ -29,15 +29,15 @@ export class SmartSubscriber<T> {
 
   private indexSubscriber(subscriber: Subscriber<T>, state: State<T>, changedProps: Set<keyof T>): Set<keyof T>{
     const {
-      proxy,
-      gotKeys,
+      getProxy,
+      getUsedkeys,
       stop
     } = propertyListener(state);
 
-    subscriber(proxy, changedProps);
+    subscriber(getProxy(), changedProps);
     stop();
 
-    return gotKeys;
+    return getUsedkeys();
   }
 
   private mainSubscriber(newState: State<T>, changedProps: Set<keyof T>) {

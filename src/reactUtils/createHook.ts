@@ -17,30 +17,33 @@ const hasIntersection = <A, B>(set1: Set<keyof A>, set2: Set<keyof B>): boolean 
   return result;
 };
 
+let activePropertyListener: (() => void) | undefined;
+
 export const createHook = <T, A>(store: LemonState<T, A>) => {
   const useStore = (): State<T> & BoundActions<A> => {
-    const [listenObject, setListenObject] = useState(propertyListener(store.getState()));
-    const [state, setState] = useState(listenObject.proxy);
-    const [wasIndexed, setWasIndexed] = useState(false);
+    const [listenObject] = useState(propertyListener(store.getState()));
+    const [state, setState] = useState(listenObject.getProxy());
+
+    const stopListenProperty = () => {
+      listenObject.stop();
+    };
+
+    if (activePropertyListener) {
+      activePropertyListener();
+      activePropertyListener = stopListenProperty;
+    }
 
     useEffect(() => {
       return store.subscribe((newState, changedProps) => {
-        if (!wasIndexed) {
-          listenObject.stop();
-        }
-        if (hasIntersection(changedProps, listenObject.gotKeys)) {
-          if (!wasIndexed) {
-            setWasIndexed(true);
-            setListenObject({
-              stop: () => {},
-              gotKeys: listenObject.gotKeys,
-              proxy: {} as State<T>
-            });
+        if (hasIntersection(changedProps, listenObject.getUsedkeys())) {
+          if (activePropertyListener === stopListenProperty) {
+            activePropertyListener();
+            activePropertyListener = undefined;
           }
           setState(newState);
         }
       });
-    }, [wasIndexed, state]);
+    }, []);
 
     return {
       ...state,

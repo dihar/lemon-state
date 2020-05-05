@@ -6,9 +6,9 @@ export const propertyListener = <T>(data: T) => {
     throw new Error('Data must be a plain object!');
   }
 
-  const proxy = {} as T;
-  const gotKeys = new Set<keyof T>();
+  let proxy = {} as T | null;
   let isActive = true;
+  const usedKeys = new Set<keyof T>();
 
   Object.keys(data).forEach((property) => {
     Object.defineProperty(proxy, property, {
@@ -17,7 +17,7 @@ export const propertyListener = <T>(data: T) => {
       set: (value) => data[property as keyof T] = value,
       get: () => {
         if (isActive) {
-          gotKeys.add(property as keyof T);
+          usedKeys.add(property as keyof T);
         }
         return data[property as keyof T];
       }
@@ -25,8 +25,12 @@ export const propertyListener = <T>(data: T) => {
   });
 
   return {
-    proxy,
-    gotKeys,
-    stop: () => { isActive = false }
+    getProxy: () => isActive && proxy ? proxy : data,
+    getUsedkeys: () => usedKeys,
+    isActive: () => isActive,
+    stop: () => {
+      isActive = false;
+      proxy = null;
+    }
   };
 };
