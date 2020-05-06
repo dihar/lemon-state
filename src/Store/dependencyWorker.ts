@@ -145,6 +145,8 @@ export const getDependencyWorker = (sharedData: SharedData) => {
       const store = sharedData.getStoreById(storeId);
       if (store) {
         const getSubscribers = sharedData.subscribersMap.get(storeId)!;
+        const getProxyLinkUpdaters = sharedData.proxyLinkUpdaters.get(storeId)!;
+        getProxyLinkUpdaters();
         getSubscribers().forEach((subscriber => subscriber(store.getState(), propSet)));
       }
     });

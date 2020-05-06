@@ -6,6 +6,7 @@ export class SharedData {
   private stores = new Map<symbol, LemonStore<any>>();
   
   public subscribersMap = new Map<symbol, () => Subscriber<any>[]>();
+  public proxyLinkUpdaters = new Map<symbol, () => void>();
   public computeChainProp = new Set<symbol>();
   public changedValues = new Set<symbol>();
   public needUpdateValues = new Set<symbol>();
@@ -84,10 +85,12 @@ export class SharedData {
   registerStore(
     storeId: symbol,
     store: LemonStore<any>,
-    getSubscribers: () => Subscriber<any>[]
+    getSubscribers: () => Subscriber<any>[],
+    getUpdateProxyLink: () => void
   ): void {
     this.stores.set(storeId, store);
     this.subscribersMap.set(storeId, getSubscribers);
+    this.proxyLinkUpdaters.set(storeId, getUpdateProxyLink)
   }
 
   /**
@@ -112,7 +115,24 @@ export class SharedData {
       this.removedValues.add(valueId);
     });
   };
-  
+
+  /**
+   * Clear store subscribers Array
+   * @param storeId Store id
+   */
+  removeStoreSubscribers(storeId: symbol) {
+    this.subscribersMap.set(storeId, () => []);
+  }
+
+
+  /**
+   * Clear store subscribers Map
+   * @param storeId Store id
+   */
+  removeStoreProxyLinkUpdater(storeId: symbol) {
+    this.proxyLinkUpdaters.set(storeId, () => {});
+  }
+
   /**
    * Check that there is no active computing values
    */

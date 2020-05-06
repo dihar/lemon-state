@@ -32,7 +32,14 @@ export class LemonStore<T> {
       sharedData.throwError(TypeError, `InitialState (in ${name}) must be plain Object`);
     }
 
-    sharedData.registerStore(this.id, this, () => this.subscribers);
+    const updateProxyLink = () => {
+      this.proxy = Object.create(
+        Object.getPrototypeOf(this.proxy), 
+        Object.getOwnPropertyDescriptors(this.proxy) 
+      );
+    };
+
+    sharedData.registerStore(this.id, this, () => this.subscribers, updateProxyLink);
     this.proxy = {} as State<T>;
 
     const initStateKeys = Object.keys(initialState) as (keyof T)[];
@@ -137,6 +144,8 @@ export class LemonStore<T> {
     const values = Array.from(this.stateValues).map(([_, value]) => value);
     this.name = `${this.name}[removed]`;
     sharedData.removeStoreValues(new Set(values));
+    sharedData.removeStoreProxyLinkUpdater(this.id);
+    sharedData.removeStoreSubscribers(this.id);
     this.stateValues.clear();
     this.isRemoved = true;
   }
