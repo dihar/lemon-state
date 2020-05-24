@@ -1,6 +1,6 @@
 {
   "name": "lemon-state",
-  "version": "1.0.0-rc.3",
+  "version": "1.0.0-rc.4",
   "description": "One more implimitation of react hooks state manager",
   "main": "dist/index.js",
   "types": "./dist/index.d.ts",
