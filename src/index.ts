@@ -1,3 +1,2 @@
-import initStore from './initStore';
-
-export default initStore;
+export { LemonState } from './LemonState';
+export { createHook } from './createHook';

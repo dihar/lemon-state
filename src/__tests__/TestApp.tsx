@@ -1,31 +1,32 @@
 import React, { memo, useCallback, NamedExoticComponent } from 'react';
-import ReactDOM from "react-dom";
-import initStore from '../initStore';
-import { Actions, Action } from '../types';
+import {  LemonState, createHook } from '../';
+import { Actions, Action, State } from '../types';
 
 interface AppState {
   loading: boolean,
   error: boolean,
   data: Array<string>,
-  checked: boolean
+  checked: boolean,
+  computed: (state: State<AppState>) => string
 };
 
-const initState = {
+const initState: AppState = {
   loading: false,
   error: false,
   data: [],
-  checked: false
-} as AppState;
+  checked: false,
+  computed: state => state.data.join(':')
+};
 
-interface AppActions extends Actions<AppState> {
+interface AppActions {
   onToggleChecked: Action<AppState>,
   onRequestData: Action<AppState>,
   onReset: Action<AppState>,
 }
 
-const actions:AppActions = {
-  onToggleChecked: ({ state }) => ({ checked: !state.checked }),
-  onRequestData: ({ setState }, payload) => {
+const actions: Actions<AppState, AppActions> = {
+  onToggleChecked: ({ getState }) => ({ checked: !getState().checked }),
+  onRequestData: ({ setState, getState }, payload) => {
     setState({
       loading: true,
       data: [],
@@ -46,12 +47,14 @@ const actions:AppActions = {
           ]
         });
       }
-    }, 500);
+    }, 10);
   },
   onReset: () => initState
 };
 
-const { useStore } = initStore(initState, actions);
+const appStore = new LemonState(initState, actions);
+
+const { useStore } = createHook(appStore);
 
 interface Props {
   onRender: (param: string) => void
@@ -66,6 +69,7 @@ const FirstSection = memo(({ onRender }) => {
       withError: true
     });
   }, [state.onRequestData]);
+
   onRender('first');
   return (
     <div>
@@ -76,6 +80,7 @@ const FirstSection = memo(({ onRender }) => {
           <span key={index} data-testid={`item(${index})`}>{item}</span>
         ))}
       </div>
+      <span data-testid='join-list'>{state.computed}</span>
       <button data-testid='loadButton' onClick={state.onRequestData}>Load data</button>
       <button data-testid='loadErrorButton' onClick={handleClickErrorRequest}>Load data with error</button>
       <input data-testid='checkbox' onChange={state.onToggleChecked} type='checkbox' />
@@ -99,10 +104,8 @@ const App = ({ onRender = () => {} }) => (
   </div>
 );
 
-export default App;
-
-test("Test App renders without crashing", () => {
-  const div = document.createElement("div");
-  ReactDOM.render(<App />, div);
-  ReactDOM.unmountComponentAtNode(div);
+test('fake test', () => {
+  expect('').toBe('');
 });
+
+export default App;
